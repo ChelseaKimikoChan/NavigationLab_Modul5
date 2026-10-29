@@ -20,7 +20,7 @@ fun AboutScreen(onBack: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text("About", style = MaterialTheme.typography.headlineMedium)
-        Text("Modul 5 Tugas Praktikum PAPB -- Navigation Compose")
+        Text("Modul 6 Tugas Praktikum PAPB -- ARSITEKTUR APLIKASI ANDROID")
         Button(onClick = onBack) { Text("Kembali") }
     }
 }
