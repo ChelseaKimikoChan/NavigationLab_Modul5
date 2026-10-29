@@ -6,8 +6,12 @@ class StudentLocalDataSource {
     private val students = listOf(
         Student(2026, "Alya Putri", "Teknik Informatika", 2026),
         Student(2027, "Bima Pratama", "Teknik Informatika", 2026),
-        Student(2028, "Citra Lestari", "Teknik Informatika", 2026)
+        Student(2028, "Citra Lestari", "Teknik Informatika", 2026),
+        Student(24601, "Jean Valjean", "Teknik Mesin", 1828),
+        Student(24602, "Enjolras", "Sistem Informasi", 1832)
     )
     fun getStudentById(id: Int): Student? =
         students.find { it.id == id }
+
+    fun getStudents(): List<Student> = students
 }
