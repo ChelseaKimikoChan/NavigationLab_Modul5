@@ -2,9 +2,12 @@ package com.example.navigationlab.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,18 +29,23 @@ fun DetailScreen(
         Text("Detail Student", style = MaterialTheme.typography.headlineMedium)
 
         when {
-            uiState.errorMessage != null ->
-                Text(uiState.errorMessage)
-
-            uiState.student != null -> {
-                val student = uiState.student
-                Text("ID: ${student.id}")
-                Text("Nama: ${student.name}")
-                Text("Program: ${student.program}")
-                Text("Angkatan: ${student.year}")
+            uiState.isLoading -> {
+                CircularProgressIndicator()
+            }
+            uiState.errorMessage != null -> {
+                Text(text = uiState.errorMessage, color = MaterialTheme.colorScheme.error)
+            }
+            else -> {
+                // Potongan kode yang sama persis dengan instruksi Modul 07 Langkah 15
+                uiState.student?.let { data ->
+                    Text(data.name, style = MaterialTheme.typography.headlineSmall)
+                    Text("Email: ${data.email}")
+                    Text("University: ${data.university}")
+                }
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onBack) {
             Text("Kembali")
         }

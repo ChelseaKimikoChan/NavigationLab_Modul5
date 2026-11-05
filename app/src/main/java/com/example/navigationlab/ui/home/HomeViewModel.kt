@@ -9,7 +9,8 @@ import com.example.navigationlab.data.repository.StudentRepository
 
 class HomeViewModel(
     private val repository: StudentRepository
-): ViewModel() {
+) : ViewModel() {
+
     var uiState by mutableStateOf(HomeUiState())
         private set
 
@@ -18,17 +19,18 @@ class HomeViewModel(
     }
 
     fun loadStudents() {
-        val list = repository.getStudents()
-        uiState = HomeUiState(students = list)
-    }
+        uiState = uiState.copy(isLoading = true, errorMessage = null)
 
-    companion object {
-        fun factory(repository: StudentRepository): ViewModelProvider.Factory =
-            object: ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T: ViewModel> create(modelClass: Class<T>): T {
-                    return HomeViewModel(repository) as T
+        repository.getStudents { result ->
+            result
+                .onSuccess { data ->
+                    uiState = HomeUiState(students = data)
                 }
-            }
+                .onFailure { error ->
+                    uiState = HomeUiState(
+                        errorMessage = error.message ?: "Gagal mengambil data"
+                    )
+                }
+        }
     }
 }

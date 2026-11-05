@@ -10,8 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.navigationlab.Routes
+import com.example.navigationlab.data.remote.RetrofitClient
+import com.example.navigationlab.data.remote.StudentRemoteDataSource
 import com.example.navigationlab.data.repository.DefaultStudentRepository
-import com.example.navigationlab.data.source.StudentLocalDataSource
 import com.example.navigationlab.ui.detail.DetailViewModel
 import com.example.navigationlab.ui.home.HomeViewModel
 import com.example.navigationlab.ui.screen.AboutScreen
@@ -21,29 +22,19 @@ import com.example.navigationlab.ui.screen.ProfileScreen
 
 @Composable
 fun NavigationLabApp() {
-    val dataSource = remember { StudentLocalDataSource() }
-    val repository = remember { DefaultStudentRepository(dataSource) }
+    val remoteDataSource = remember { StudentRemoteDataSource(RetrofitClient.apiService) }
+    val repository = remember { DefaultStudentRepository(remoteDataSource) }
     val navController = rememberNavController()
 
+
     NavHost(
-        navController = navController,
-        startDestination = Routes.HOME
+        navController = navController, startDestination = Routes.HOME
     ) {
         composable(Routes.HOME) {
-            val homeViewModel: HomeViewModel = viewModel(
-                factory = HomeViewModel.factory(repository)
-            )
+            val homeViewModel = remember { HomeViewModel(repository) }
 
             HomeScreen(
                 uiState = homeViewModel.uiState,
-
-                onSelectStudent = {
-                    id -> navController.navigate(Routes.detail(id))
-                },
-
-                onOpenDetail = { id ->
-                    navController.navigate(Routes.detail(id))
-                },
 
                 onOpenProfile = {
                     navController.navigate(Routes.PROFILE)
@@ -51,15 +42,14 @@ fun NavigationLabApp() {
 
                 onOpenAbout = {
                     navController.navigate(Routes.ABOUT)
-                }
+                },
+                onStudentClick = { id -> navController.navigate(Routes.detail(id)) },
+                onRetry = homeViewModel::loadStudents
             )
         }
         composable(
-            route = Routes.DETAIL,
-            arguments = listOf(
-                navArgument("studentId") { type = NavType.IntType }
-            )
-        ) { backStackEntry ->
+            route = Routes.DETAIL, arguments = listOf(
+            navArgument("studentId") { type = NavType.IntType })) { backStackEntry ->
             val studentId = backStackEntry.arguments?.getInt("studentId") ?: -1
             val viewModel: DetailViewModel = viewModel(
                 factory = DetailViewModel.factory(repository)
@@ -68,19 +58,15 @@ fun NavigationLabApp() {
                 viewModel.loadStudent(studentId)
             }
             DetailScreen(
-                uiState = viewModel.uiState,
-                onBack = { navController.popBackStack() }
-            )
+                uiState = viewModel.uiState, onBack = { navController.popBackStack() })
         }
         composable(Routes.PROFILE) {
             ProfileScreen(
-                onBack = { navController.popBackStack() }
-            )
+                onBack = { navController.popBackStack() })
         }
         composable(Routes.ABOUT) {
             AboutScreen(
-                onBack = { navController.popBackStack() }
-            )
+                onBack = { navController.popBackStack() })
         }
     }
 }
