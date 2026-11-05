@@ -33,4 +33,25 @@ class HomeViewModel(
                 }
         }
     }
+
+    fun searchStudents(query: String) {
+        if (query.isBlank()) {
+            loadStudents()
+            return
+        }
+
+        uiState = uiState.copy(isLoading = true, errorMessage = null)
+
+        repository.searchStudents(query) { result ->
+            result
+                .onSuccess { data ->
+                    uiState = HomeUiState(students = data)
+                }
+                .onFailure { error ->
+                    uiState = HomeUiState(
+                        errorMessage = error.message ?: "Gagal mencari data"
+                    )
+                }
+        }
+    }
 }

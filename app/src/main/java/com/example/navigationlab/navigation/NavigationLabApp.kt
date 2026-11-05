@@ -44,7 +44,8 @@ fun NavigationLabApp() {
                     navController.navigate(Routes.ABOUT)
                 },
                 onStudentClick = { id -> navController.navigate(Routes.detail(id)) },
-                onRetry = homeViewModel::loadStudents
+                onRetry = homeViewModel::loadStudents,
+                onSearch = { query -> homeViewModel.searchStudents(query) }
             )
         }
         composable(

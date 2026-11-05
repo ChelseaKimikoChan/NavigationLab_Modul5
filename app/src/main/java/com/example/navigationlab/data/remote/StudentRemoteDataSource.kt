@@ -48,4 +48,21 @@ class StudentRemoteDataSource(
             }
         })
     }
+
+    fun searchStudents(query: String, callback: (Result<List<UserDto>>) -> Unit) {
+        api.searchUsers(query).enqueue(object : Callback<UserResponse> {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+                val body = response.body()
+                if (response.isSuccessful && body != null) {
+                    callback(Result.success(body.users))
+                } else {
+                    callback(Result.failure(Exception("HTTP ${response.code()}")))
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                callback(Result.failure(t))
+            }
+        })
+    }
 }
