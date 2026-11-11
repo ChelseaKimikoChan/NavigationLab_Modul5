@@ -34,7 +34,8 @@ fun HomeScreen(
     onOpenProfile: () -> Unit,
     onOpenAbout: () -> Unit,
     onStudentClick: (Int) -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onRefresh: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -49,6 +50,14 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
+
+        OutlinedButton(
+            onClick = onRefresh,
+            enabled = !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Refresh")
+        }
 
         when {
             uiState.isLoading -> {

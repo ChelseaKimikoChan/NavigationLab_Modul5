@@ -46,7 +46,8 @@ fun NavigationLabApp() {
                 onOpenProfile = { navController.navigate(Routes.PROFILE) },
                 onOpenAbout = { navController.navigate(Routes.ABOUT) },
                 onStudentClick = { id -> navController.navigate(Routes.detail(id)) },
-                onRetry = homeViewModel::retry
+                onRetry = homeViewModel::retry,
+                onRefresh = homeViewModel::refresh
             )
 
         }

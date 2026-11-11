@@ -87,6 +87,29 @@ class HomeViewModel(
         }
     }
 
+    fun refresh() {
+        if (_uiState.value.isLoading) return
+
+        val query = searchQuery.value
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            try {
+                val data = if (query.isBlank()) {
+                    repository.getStudents()
+                } else {
+                    repository.searchStudents(query)
+                }
+                _uiState.value = HomeUiState(students = data)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _uiState.value = HomeUiState(
+                    errorMessage = e.message ?: "Refresh gagal"
+                )
+            }
+        }
+    }
+
     companion object {
         fun factory(repository: StudentRepository): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
@@ -96,5 +119,4 @@ class HomeViewModel(
                 }
             }
     }
-
 }
