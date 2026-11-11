@@ -29,36 +29,26 @@ import com.example.navigationlab.ui.home.HomeUiState
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onOpenProfile: () -> Unit,
     onOpenAbout: () -> Unit,
     onStudentClick: (Int) -> Unit,
-    onRetry: () -> Unit,
-    onSearch: (String) -> Unit
+    onRetry: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Row(
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = onSearchQueryChange,
+            label = { Text("Cari profil") },
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Cari Mahasiswa") },
-                modifier = Modifier.weight(1f),
-                singleLine = true
-            )
-            Button(onClick = { onSearch(searchQuery) }) {
-                Text("Cari")
-            }
-        }
+            singleLine = true
+        )
 
         when {
             uiState.isLoading -> {
@@ -78,7 +68,7 @@ fun HomeScreen(
             else -> {
                 LazyColumn {
                     items(uiState.students) { student ->
-                        TextButton (onClick = { onStudentClick(student.id) }) {
+                        TextButton(onClick = { onStudentClick(student.id) }) {
                             Text("${student.id} - ${student.name}")
                         }
                     }
@@ -88,11 +78,7 @@ fun HomeScreen(
 
         HorizontalDivider()
 
-        OutlinedButton(onClick = onOpenProfile) {
-            Text("Buka Profile")
-        }
-        OutlinedButton(onClick = onOpenAbout) {
-            Text("About")
-        }
+        OutlinedButton(onClick = onOpenProfile) { Text("Buka Profile") }
+        OutlinedButton(onClick = onOpenAbout) { Text("About") }
     }
 }
