@@ -33,6 +33,7 @@ fun HomeScreen(
     onSearchQueryChange: (String) -> Unit,
     onOpenProfile: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenFavorites: () -> Unit,
     onStudentClick: (Int) -> Unit,
     onRetry: () -> Unit,
     onRefresh: () -> Unit
@@ -87,6 +88,7 @@ fun HomeScreen(
 
         HorizontalDivider()
 
+        OutlinedButton(onClick = onOpenFavorites) { Text("Favorit") }
         OutlinedButton(onClick = onOpenProfile) { Text("Buka Profile") }
         OutlinedButton(onClick = onOpenAbout) { Text("About") }
     }

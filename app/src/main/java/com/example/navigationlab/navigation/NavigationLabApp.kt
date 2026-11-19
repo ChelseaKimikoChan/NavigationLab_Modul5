@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.navigationlab.data.preferences.UserPreferencesRepository
 import com.example.navigationlab.data.local.DatabaseProvider
 import com.example.navigationlab.data.repository.FavoriteRepository
+import com.example.navigationlab.ui.favorites.FavoritesViewModel
+import com.example.navigationlab.ui.screen.FavoritesScreen
 
 @Composable
 fun NavigationLabApp() {
@@ -56,6 +58,7 @@ fun NavigationLabApp() {
                 onSearchQueryChange = homeViewModel::onSearchQueryChange,
                 onOpenProfile = { navController.navigate(Routes.PROFILE) },
                 onOpenAbout = { navController.navigate(Routes.ABOUT) },
+                onOpenFavorites = { navController.navigate(Routes.FAVORITES) },
                 onStudentClick = { id -> navController.navigate(Routes.detail(id)) },
                 onRetry = homeViewModel::retry,
                 onRefresh = homeViewModel::refresh
@@ -87,6 +90,19 @@ fun NavigationLabApp() {
         composable(Routes.ABOUT) {
             AboutScreen(
                 onBack = { navController.popBackStack() })
+        }
+        composable(Routes.FAVORITES) {
+            val favoritesViewModel: FavoritesViewModel = viewModel(
+                factory = FavoritesViewModel.factory(favoriteRepository, preferencesRepository)
+            )
+            val favoritesUiState by favoritesViewModel.uiState.collectAsStateWithLifecycle()
+
+            FavoritesScreen(
+                uiState = favoritesUiState,
+                onToggleSort = favoritesViewModel::toggleSortOrder,
+                onStudentClick = { id -> navController.navigate(Routes.detail(id)) },
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
